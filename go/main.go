@@ -48,17 +48,17 @@ func main() {
 			continue
 		}
 
-		var d MedMaker
+		var d entity.MedMaker
 		if len(row) == 3 {
 			url := strings.Split(row[2], "\n")
 
-			d = MedMaker{
+			d = entity.MedMaker{
 				Name: row[1],
 				Url:  url[0],
 			}
 		} else {
 
-			d = MedMaker{
+			d = entity.MedMaker{
 				Name: row[1],
 				Url:  "",
 			}
@@ -66,17 +66,4 @@ func main() {
 
 		fmt.Printf("%v\n", d.ToString())
 	}
-
-	// s := "2020年12月31日"
-	// re, _ := regexp.Compile(`(\d{4})年(\d{1,2})月(\d{1,2})日`)
-	// fmt.Println(re.FindAllStringSubmatch(s, -1)[0][1])
-}
-
-type MedMaker struct {
-	Name string
-	Url  string
-}
-
-func (m *MedMaker) ToString() string {
-	return fmt.Sprintf("Name: %s, Url: %s", m.Name, m.Url)
 }
