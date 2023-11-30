@@ -13,50 +13,71 @@ type MedSupply struct {
 	GenericName              string
 	Unit                     string
 	YjCode                   string
+	YjBase                   string
 	Maker                    string
 	BrandName                string
-	SalesCategory            *string
-	ShipmentStatus           *string
-	SupplyStatus             *string
-	ExpectLiftingStatus      *string
-	ExpectLiftingDescription *string
-	Reason                   *string
-	UpdatedAt                *time.Time
+	SalesCategory            string
+	ShipmentStatus           string
+	SupplyStatus             string
+	ExpectLiftingStatus      string
+	ExpectLiftingDescription string
+	Reason                   string
+	UpdatedAt                time.Time
 }
 
 func MedSupplyFromRow(row []string) MedSupply {
-	t := GetTime(row[13])
-	ship := ConvertShipStatus(row[7])
-	sup := ConvertSupplyStatus(row[8])
-	ls := ConvertLiftingStatus(row[10])
-	r := ConvertReason(row[12])
+	var arr [15]string
+	for i, v := range row {
+		arr[i] = v
+	}
+
+	t := GetTime(arr[13])
+	ship := ConvertShipStatus(arr[7])
+	sup := ConvertSupplyStatus(arr[8])
+	ls := ConvertLiftingStatus(arr[10])
+	r := ConvertReason(arr[12])
 
 	return MedSupply{
 		DoseForm:                 row[0],
 		GenericName:              row[1],
 		Unit:                     row[2],
 		YjCode:                   row[3],
+		YjBase:                   GetYjBase(row[3]),
 		Maker:                    row[4],
-		BrandName:                row[5],
-		SalesCategory:            &row[6],
-		ShipmentStatus:           &ship,
-		SupplyStatus:             &sup,
-		ExpectLiftingStatus:      &ls,
-		ExpectLiftingDescription: &row[11],
-		Reason:                   &r,
-		UpdatedAt:                &t,
+		BrandName:                arr[5],
+		SalesCategory:            arr[6],
+		ShipmentStatus:           ship,
+		SupplyStatus:             sup,
+		ExpectLiftingStatus:      ls,
+		ExpectLiftingDescription: arr[11],
+		Reason:                   r,
+		UpdatedAt:                t,
 	}
 }
 
 func GetTime(timeString string) time.Time {
 	re, _ := regexp.Compile(`(\d{4})年(\d{1,2})月(\d{1,2})日`)
-	d := re.FindAllStringSubmatch(timeString, -1)[0]
+	r := re.FindAllStringSubmatch(timeString, -1)
+	if len(r) == 0 {
+		return time.Time{}
+	}
+
+	d := r[0]
 
 	y, _ := strconv.Atoi(d[1])
 	m, _ := strconv.Atoi(d[2])
 	da, _ := strconv.Atoi(d[3])
 
 	return time.Date(y, time.Month(m), da, 0, 0, 0, 0, time.UTC)
+}
+
+func GetYjBase(yjCode string) string {
+	if yjCode == "" {
+		return ""
+	}
+
+	re, _ := regexp.Compile(`^(\d+)`)
+	return re.FindAllStringSubmatch(yjCode, -1)[0][0]
 }
 
 func ConvertShipStatus(s string) string {
@@ -166,6 +187,6 @@ func ConvertReason(s string) string {
 }
 
 func (m MedSupply) ToString() string {
-	return fmt.Sprintf("DoseForm: %v, GenericName: %v, Unit: %v, YjCode: %v, Maker: %v, BrandName: %v, SalesCategory: %v, ShipmentStatus: %v, SupplyStatus: %v, ExpectLiftingStatus: %v, ExpectLiftingDescription: %v, Reason: %v, UpdatedAt: %v",
-		m.DoseForm, m.GenericName, m.Unit, m.YjCode, m.Maker, m.BrandName, *m.SalesCategory, *m.ShipmentStatus, *m.SupplyStatus, *m.ExpectLiftingStatus, *m.ExpectLiftingDescription, *m.Reason, *m.UpdatedAt)
+	return fmt.Sprintf("DoseForm: %v, GenericName: %v, Unit: %v, YjCode: %v, YjBase: %v, Maker: %v, BrandName: %v, SalesCategory: %v, ShipmentStatus: %v, SupplyStatus: %v, ExpectLiftingStatus: %v, ExpectLiftingDescription: %v, Reason: %v, UpdatedAt: %v",
+		m.DoseForm, m.GenericName, m.Unit, m.YjCode, m.YjBase, m.Maker, m.BrandName, m.SalesCategory, m.ShipmentStatus, m.SupplyStatus, m.ExpectLiftingStatus, m.ExpectLiftingDescription, m.Reason, m.UpdatedAt)
 }

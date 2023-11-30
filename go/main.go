@@ -1,47 +1,98 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
+	"strconv"
 	"strings"
 
+	"entgo.io/ent/dialect"
+	"github.com/obutora/med_supply_info/ent"
 	"github.com/obutora/med_supply_info/entity"
+	_ "github.com/xiaoqidun/entps"
 	"github.com/xuri/excelize/v2"
 )
 
+const filePath = "../report.xlsx"
+
 func main() {
-	f, err := excelize.OpenFile("../report.xlsx")
+	// Example_Todo()
+	client, err := ent.Open(dialect.SQLite, "file:../flutter_med_supply/assets/med.db")
+	if err != nil {
+		log.Fatalf("failed opening connection to sqlite: %v", err)
+	}
+	defer client.Close()
+	ctx := context.Background()
+	// 自動マイグレーションツールを実行して、すべてのスキーマリソースを作成します。
+	if err := client.Schema.Create(ctx); err != nil {
+		log.Fatalf("failed creating schema resources: %v", err)
+	}
+
+	f, err := excelize.OpenFile(filePath)
 	if err != nil {
 		fmt.Printf("open file error: %v\n", err)
 	}
 
 	defer f.Close()
 
+	ms, err := getMedSupplyFromFile(f)
+	if err != nil {
+		fmt.Printf("getMedSupplyFromFile error: %v\n", err)
+	}
+
+	fmt.Printf("medSupplies: %v\n", len(ms))
+
+	err = InsertMedSupply(ctx, client, ms)
+	if err != nil {
+		fmt.Printf("InsertMed error: %v\n", err)
+	}
+
+	mm, err := getMedMakerFromFile(f)
+	if err != nil {
+		log.Fatalf("getMedMakerFromFile error: %v\n", err)
+	}
+	fmt.Printf("medMakers: %v\n", len(mm))
+
+	err = InsertMedMaker(ctx, client, mm)
+	if err != nil {
+		log.Fatalf("InsertMedMaker error: %v\n", err)
+	}
+
+}
+
+func getMedSupplyFromFile(f *excelize.File) ([]entity.MedSupply, error) {
 	// 薬剤情報取得
 	s1Name := f.GetSheetName(0)
 	rows, err := f.GetRows(s1Name)
 	if err != nil {
-		fmt.Printf("get rows error: %v\n", err)
+		return nil, fmt.Errorf("get MedSupply rows error: %v\n", err)
 	}
 
-	for i, row := range rows {
+	defer f.Close()
 
-		// TODO: Remove Upper Limit
-		if i == 0 || i == 1 || i > 47 {
+	var medSupplies []entity.MedSupply
+	for i, row := range rows {
+		if i == 0 || i == 1 {
 			continue
 		}
 		d := entity.MedSupplyFromRow(row)
-		fmt.Printf("d: %v\n", d.ToString())
+		medSupplies = append(medSupplies, d)
 	}
+	return medSupplies, nil
+}
 
+func getMedMakerFromFile(f *excelize.File) ([]entity.MedMaker, error) {
 	// メーカー名・HP取得
 	s4Name := f.GetSheetName(3)
-	rows, err = f.GetRows(s4Name)
+	rows, err := f.GetRows(s4Name)
 	if err != nil {
-		fmt.Printf("get rows error: %v\n", err)
+		return nil, fmt.Errorf("get rows error: %v\n", err)
 	}
 
+	var medMakers []entity.MedMaker
 	for i, row := range rows {
-		if i == 0 || i > 50 {
+		if i == 0 {
 			continue
 		}
 		if row[1] == "" {
@@ -64,6 +115,72 @@ func main() {
 			}
 		}
 
-		fmt.Printf("%v\n", d.ToString())
+		medMakers = append(medMakers, d)
 	}
+
+	return medMakers, nil
+}
+
+func InsertMedSupply(ctx context.Context, client *ent.Client, medSupplies []entity.MedSupply) error {
+
+	var builder []*ent.MedSupplyCreate
+	for _, v := range medSupplies {
+		yjBase, _ := strconv.Atoi(v.YjBase)
+
+		c := client.MedSupply.Create().
+			SetDoseForm(v.DoseForm).
+			SetGenericName(v.GenericName).
+			SetUnit(v.Unit).
+			SetYjCode(v.YjCode).
+			SetYjBase(yjBase).
+			SetMaker(v.Maker).
+			SetBrandName(v.BrandName).
+			SetSalesCategory(v.SalesCategory).
+			SetShipmentStatus(v.ShipmentStatus).
+			SetSupplyStatus(v.SupplyStatus).
+			SetExpectLiftingStatus(v.ExpectLiftingStatus).
+			SetExpectLiftingDescription(v.ExpectLiftingDescription).
+			SetReason(v.Reason).
+			SetUpdatedAt(v.UpdatedAt)
+
+		builder = append(builder, c)
+	}
+
+	// 500個ずつに分割して登録
+	for i := 0; i < len(builder); i += 500 {
+		end := i + 500
+		if end > len(builder) {
+			end = len(builder)
+		}
+		_, err := client.MedSupply.CreateBulk(builder[i:end]...).Save(ctx)
+		if err != nil {
+			log.Fatalf("failed creating medSupply: %v", err)
+		}
+	}
+	return nil
+}
+
+func InsertMedMaker(ctx context.Context, client *ent.Client, medMakers []entity.MedMaker) error {
+
+	var builder []*ent.MedMakerCreate
+	for _, v := range medMakers {
+		c := client.MedMaker.Create().
+			SetName(v.Name).
+			SetURL(v.Url)
+
+		builder = append(builder, c)
+	}
+
+	// 500個ずつに分割して登録
+	for i := 0; i < len(builder); i += 500 {
+		end := i + 500
+		if end > len(builder) {
+			end = len(builder)
+		}
+		_, err := client.MedMaker.CreateBulk(builder[i:end]...).Save(ctx)
+		if err != nil {
+			log.Fatalf("failed creating medMaker: %v", err)
+		}
+	}
+	return nil
 }
