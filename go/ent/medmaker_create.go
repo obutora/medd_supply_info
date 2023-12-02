@@ -31,6 +31,12 @@ func (mmc *MedMakerCreate) SetURL(s string) *MedMakerCreate {
 	return mmc
 }
 
+// SetFaviconURL sets the "favicon_url" field.
+func (mmc *MedMakerCreate) SetFaviconURL(s string) *MedMakerCreate {
+	mmc.mutation.SetFaviconURL(s)
+	return mmc
+}
+
 // Mutation returns the MedMakerMutation object of the builder.
 func (mmc *MedMakerCreate) Mutation() *MedMakerMutation {
 	return mmc.mutation
@@ -71,6 +77,9 @@ func (mmc *MedMakerCreate) check() error {
 	if _, ok := mmc.mutation.URL(); !ok {
 		return &ValidationError{Name: "url", err: errors.New(`ent: missing required field "MedMaker.url"`)}
 	}
+	if _, ok := mmc.mutation.FaviconURL(); !ok {
+		return &ValidationError{Name: "favicon_url", err: errors.New(`ent: missing required field "MedMaker.favicon_url"`)}
+	}
 	return nil
 }
 
@@ -104,6 +113,10 @@ func (mmc *MedMakerCreate) createSpec() (*MedMaker, *sqlgraph.CreateSpec) {
 	if value, ok := mmc.mutation.URL(); ok {
 		_spec.SetField(medmaker.FieldURL, field.TypeString, value)
 		_node.URL = value
+	}
+	if value, ok := mmc.mutation.FaviconURL(); ok {
+		_spec.SetField(medmaker.FieldFaviconURL, field.TypeString, value)
+		_node.FaviconURL = value
 	}
 	return _node, _spec
 }

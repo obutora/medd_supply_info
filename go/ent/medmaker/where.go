@@ -62,6 +62,11 @@ func URL(v string) predicate.MedMaker {
 	return predicate.MedMaker(sql.FieldEQ(FieldURL, v))
 }
 
+// FaviconURL applies equality check predicate on the "favicon_url" field. It's identical to FaviconURLEQ.
+func FaviconURL(v string) predicate.MedMaker {
+	return predicate.MedMaker(sql.FieldEQ(FieldFaviconURL, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.MedMaker {
 	return predicate.MedMaker(sql.FieldEQ(FieldName, v))
@@ -190,6 +195,71 @@ func URLEqualFold(v string) predicate.MedMaker {
 // URLContainsFold applies the ContainsFold predicate on the "url" field.
 func URLContainsFold(v string) predicate.MedMaker {
 	return predicate.MedMaker(sql.FieldContainsFold(FieldURL, v))
+}
+
+// FaviconURLEQ applies the EQ predicate on the "favicon_url" field.
+func FaviconURLEQ(v string) predicate.MedMaker {
+	return predicate.MedMaker(sql.FieldEQ(FieldFaviconURL, v))
+}
+
+// FaviconURLNEQ applies the NEQ predicate on the "favicon_url" field.
+func FaviconURLNEQ(v string) predicate.MedMaker {
+	return predicate.MedMaker(sql.FieldNEQ(FieldFaviconURL, v))
+}
+
+// FaviconURLIn applies the In predicate on the "favicon_url" field.
+func FaviconURLIn(vs ...string) predicate.MedMaker {
+	return predicate.MedMaker(sql.FieldIn(FieldFaviconURL, vs...))
+}
+
+// FaviconURLNotIn applies the NotIn predicate on the "favicon_url" field.
+func FaviconURLNotIn(vs ...string) predicate.MedMaker {
+	return predicate.MedMaker(sql.FieldNotIn(FieldFaviconURL, vs...))
+}
+
+// FaviconURLGT applies the GT predicate on the "favicon_url" field.
+func FaviconURLGT(v string) predicate.MedMaker {
+	return predicate.MedMaker(sql.FieldGT(FieldFaviconURL, v))
+}
+
+// FaviconURLGTE applies the GTE predicate on the "favicon_url" field.
+func FaviconURLGTE(v string) predicate.MedMaker {
+	return predicate.MedMaker(sql.FieldGTE(FieldFaviconURL, v))
+}
+
+// FaviconURLLT applies the LT predicate on the "favicon_url" field.
+func FaviconURLLT(v string) predicate.MedMaker {
+	return predicate.MedMaker(sql.FieldLT(FieldFaviconURL, v))
+}
+
+// FaviconURLLTE applies the LTE predicate on the "favicon_url" field.
+func FaviconURLLTE(v string) predicate.MedMaker {
+	return predicate.MedMaker(sql.FieldLTE(FieldFaviconURL, v))
+}
+
+// FaviconURLContains applies the Contains predicate on the "favicon_url" field.
+func FaviconURLContains(v string) predicate.MedMaker {
+	return predicate.MedMaker(sql.FieldContains(FieldFaviconURL, v))
+}
+
+// FaviconURLHasPrefix applies the HasPrefix predicate on the "favicon_url" field.
+func FaviconURLHasPrefix(v string) predicate.MedMaker {
+	return predicate.MedMaker(sql.FieldHasPrefix(FieldFaviconURL, v))
+}
+
+// FaviconURLHasSuffix applies the HasSuffix predicate on the "favicon_url" field.
+func FaviconURLHasSuffix(v string) predicate.MedMaker {
+	return predicate.MedMaker(sql.FieldHasSuffix(FieldFaviconURL, v))
+}
+
+// FaviconURLEqualFold applies the EqualFold predicate on the "favicon_url" field.
+func FaviconURLEqualFold(v string) predicate.MedMaker {
+	return predicate.MedMaker(sql.FieldEqualFold(FieldFaviconURL, v))
+}
+
+// FaviconURLContainsFold applies the ContainsFold predicate on the "favicon_url" field.
+func FaviconURLContainsFold(v string) predicate.MedMaker {
+	return predicate.MedMaker(sql.FieldContainsFold(FieldFaviconURL, v))
 }
 
 // And groups predicates with the AND operator between them.

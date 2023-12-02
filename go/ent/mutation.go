@@ -39,6 +39,7 @@ type MedMakerMutation struct {
 	id            *int
 	name          *string
 	url           *string
+	favicon_url   *string
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*MedMaker, error)
@@ -215,6 +216,42 @@ func (m *MedMakerMutation) ResetURL() {
 	m.url = nil
 }
 
+// SetFaviconURL sets the "favicon_url" field.
+func (m *MedMakerMutation) SetFaviconURL(s string) {
+	m.favicon_url = &s
+}
+
+// FaviconURL returns the value of the "favicon_url" field in the mutation.
+func (m *MedMakerMutation) FaviconURL() (r string, exists bool) {
+	v := m.favicon_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFaviconURL returns the old "favicon_url" field's value of the MedMaker entity.
+// If the MedMaker object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MedMakerMutation) OldFaviconURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFaviconURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFaviconURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFaviconURL: %w", err)
+	}
+	return oldValue.FaviconURL, nil
+}
+
+// ResetFaviconURL resets all changes to the "favicon_url" field.
+func (m *MedMakerMutation) ResetFaviconURL() {
+	m.favicon_url = nil
+}
+
 // Where appends a list predicates to the MedMakerMutation builder.
 func (m *MedMakerMutation) Where(ps ...predicate.MedMaker) {
 	m.predicates = append(m.predicates, ps...)
@@ -249,12 +286,15 @@ func (m *MedMakerMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MedMakerMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.name != nil {
 		fields = append(fields, medmaker.FieldName)
 	}
 	if m.url != nil {
 		fields = append(fields, medmaker.FieldURL)
+	}
+	if m.favicon_url != nil {
+		fields = append(fields, medmaker.FieldFaviconURL)
 	}
 	return fields
 }
@@ -268,6 +308,8 @@ func (m *MedMakerMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case medmaker.FieldURL:
 		return m.URL()
+	case medmaker.FieldFaviconURL:
+		return m.FaviconURL()
 	}
 	return nil, false
 }
@@ -281,6 +323,8 @@ func (m *MedMakerMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldName(ctx)
 	case medmaker.FieldURL:
 		return m.OldURL(ctx)
+	case medmaker.FieldFaviconURL:
+		return m.OldFaviconURL(ctx)
 	}
 	return nil, fmt.Errorf("unknown MedMaker field %s", name)
 }
@@ -303,6 +347,13 @@ func (m *MedMakerMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetURL(v)
+		return nil
+	case medmaker.FieldFaviconURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFaviconURL(v)
 		return nil
 	}
 	return fmt.Errorf("unknown MedMaker field %s", name)
@@ -358,6 +409,9 @@ func (m *MedMakerMutation) ResetField(name string) error {
 		return nil
 	case medmaker.FieldURL:
 		m.ResetURL()
+		return nil
+	case medmaker.FieldFaviconURL:
+		m.ResetFaviconURL()
 		return nil
 	}
 	return fmt.Errorf("unknown MedMaker field %s", name)

@@ -15,6 +15,8 @@ const (
 	FieldName = "name"
 	// FieldURL holds the string denoting the url field in the database.
 	FieldURL = "url"
+	// FieldFaviconURL holds the string denoting the favicon_url field in the database.
+	FieldFaviconURL = "favicon_url"
 	// Table holds the table name of the medmaker in the database.
 	Table = "med_makers"
 )
@@ -24,6 +26,7 @@ var Columns = []string{
 	FieldID,
 	FieldName,
 	FieldURL,
+	FieldFaviconURL,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -52,4 +55,9 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByURL orders the results by the url field.
 func ByURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldURL, opts...).ToFunc()
+}
+
+// ByFaviconURL orders the results by the favicon_url field.
+func ByFaviconURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFaviconURL, opts...).ToFunc()
 }

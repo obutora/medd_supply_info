@@ -12,12 +12,15 @@ import (
 	"github.com/obutora/med_supply_info/entity"
 	_ "github.com/xiaoqidun/entps"
 	"github.com/xuri/excelize/v2"
+
+	"github.com/gocolly/colly"
+
+	"net/url"
 )
 
 const filePath = "../report.xlsx"
 
 func main() {
-	// Example_Todo()
 	client, err := ent.Open(dialect.SQLite, "file:../flutter_med_supply/assets/med.db")
 	if err != nil {
 		log.Fatalf("failed opening connection to sqlite: %v", err)
@@ -58,6 +61,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("InsertMedMaker error: %v\n", err)
 	}
+
+	// f := GetFaviconUrl("https://www.nichiiko.co.jp/")
+	// f := GetFaviconUrl("https://www.wakamoto-pharm.co.jp/medical/")
+	// f := GetFaviconUrl("https://med.nipro.co.jp/pharmaceuticals")
+	// f := GetFaviconUrl("https://kk-takamitsu.co.jp/product/")
+	// f := GetFaviconUrl("https://www.ayumi-pharma.com/confirmation/")
+	// fmt.Printf("faviconUrl: %v\n", f)
 
 }
 
@@ -104,14 +114,16 @@ func getMedMakerFromFile(f *excelize.File) ([]entity.MedMaker, error) {
 			url := strings.Split(row[2], "\n")
 
 			d = entity.MedMaker{
-				Name: row[1],
-				Url:  url[0],
+				Name:       row[1],
+				Url:        url[0],
+				FaviconUrl: GetFaviconUrl(url[0]),
 			}
 		} else {
 
 			d = entity.MedMaker{
-				Name: row[1],
-				Url:  "",
+				Name:       row[1],
+				Url:        "",
+				FaviconUrl: "",
 			}
 		}
 
@@ -166,8 +178,8 @@ func InsertMedMaker(ctx context.Context, client *ent.Client, medMakers []entity.
 	for _, v := range medMakers {
 		c := client.MedMaker.Create().
 			SetName(v.Name).
-			SetURL(v.Url)
-
+			SetURL(v.Url).
+			SetFaviconURL(v.FaviconUrl)
 		builder = append(builder, c)
 	}
 
@@ -183,4 +195,46 @@ func InsertMedMaker(ctx context.Context, client *ent.Client, medMakers []entity.
 		}
 	}
 	return nil
+}
+
+func GetFaviconUrl(url string) string {
+	c := colly.NewCollector()
+
+	var faviconUrl string
+
+	c.OnHTML("link", func(e *colly.HTMLElement) {
+		if faviconUrl != "" {
+			return
+		}
+
+		if e.Attr("rel") == "icon" || e.Attr("rel") == "shortcut icon" {
+			favicon := e.Attr("href")
+			faviconUrl = toAbsoluteFaviconUrl(url, favicon)
+			// fmt.Printf("faviconUrl: %v\n", faviconUrl)
+		}
+	})
+	c.Visit(url)
+	fmt.Printf("faviconUrl: %v\n", faviconUrl)
+	return faviconUrl
+}
+
+func toAbsoluteFaviconUrl(fetchUrl string, faviconUrl string) string {
+	if faviconUrl == "" {
+		return ""
+	}
+
+	if strings.HasPrefix(faviconUrl, "http") {
+		return faviconUrl
+	}
+
+	uri, err := url.Parse(fetchUrl)
+	if err != nil {
+		fmt.Printf("url.Parse error: %v\n", err)
+		return ""
+	}
+
+	originString := uri.Scheme + "://" + uri.Host
+	origin, _ := url.Parse(originString)
+
+	return origin.JoinPath(faviconUrl).String()
 }

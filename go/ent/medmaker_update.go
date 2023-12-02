@@ -55,6 +55,20 @@ func (mmu *MedMakerUpdate) SetNillableURL(s *string) *MedMakerUpdate {
 	return mmu
 }
 
+// SetFaviconURL sets the "favicon_url" field.
+func (mmu *MedMakerUpdate) SetFaviconURL(s string) *MedMakerUpdate {
+	mmu.mutation.SetFaviconURL(s)
+	return mmu
+}
+
+// SetNillableFaviconURL sets the "favicon_url" field if the given value is not nil.
+func (mmu *MedMakerUpdate) SetNillableFaviconURL(s *string) *MedMakerUpdate {
+	if s != nil {
+		mmu.SetFaviconURL(*s)
+	}
+	return mmu
+}
+
 // Mutation returns the MedMakerMutation object of the builder.
 func (mmu *MedMakerUpdate) Mutation() *MedMakerMutation {
 	return mmu.mutation
@@ -102,6 +116,9 @@ func (mmu *MedMakerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := mmu.mutation.URL(); ok {
 		_spec.SetField(medmaker.FieldURL, field.TypeString, value)
 	}
+	if value, ok := mmu.mutation.FaviconURL(); ok {
+		_spec.SetField(medmaker.FieldFaviconURL, field.TypeString, value)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, mmu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{medmaker.Label}
@@ -146,6 +163,20 @@ func (mmuo *MedMakerUpdateOne) SetURL(s string) *MedMakerUpdateOne {
 func (mmuo *MedMakerUpdateOne) SetNillableURL(s *string) *MedMakerUpdateOne {
 	if s != nil {
 		mmuo.SetURL(*s)
+	}
+	return mmuo
+}
+
+// SetFaviconURL sets the "favicon_url" field.
+func (mmuo *MedMakerUpdateOne) SetFaviconURL(s string) *MedMakerUpdateOne {
+	mmuo.mutation.SetFaviconURL(s)
+	return mmuo
+}
+
+// SetNillableFaviconURL sets the "favicon_url" field if the given value is not nil.
+func (mmuo *MedMakerUpdateOne) SetNillableFaviconURL(s *string) *MedMakerUpdateOne {
+	if s != nil {
+		mmuo.SetFaviconURL(*s)
 	}
 	return mmuo
 }
@@ -226,6 +257,9 @@ func (mmuo *MedMakerUpdateOne) sqlSave(ctx context.Context) (_node *MedMaker, er
 	}
 	if value, ok := mmuo.mutation.URL(); ok {
 		_spec.SetField(medmaker.FieldURL, field.TypeString, value)
+	}
+	if value, ok := mmuo.mutation.FaviconURL(); ok {
+		_spec.SetField(medmaker.FieldFaviconURL, field.TypeString, value)
 	}
 	_node = &MedMaker{config: mmuo.config}
 	_spec.Assign = _node.assignValues

@@ -13,6 +13,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "url", Type: field.TypeString},
+		{Name: "favicon_url", Type: field.TypeString},
 	}
 	// MedMakersTable holds the schema information for the "med_makers" table.
 	MedMakersTable = &schema.Table{

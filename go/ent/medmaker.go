@@ -19,7 +19,9 @@ type MedMaker struct {
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// URL holds the value of the "url" field.
-	URL          string `json:"url,omitempty"`
+	URL string `json:"url,omitempty"`
+	// FaviconURL holds the value of the "favicon_url" field.
+	FaviconURL   string `json:"favicon_url,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -30,7 +32,7 @@ func (*MedMaker) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case medmaker.FieldID:
 			values[i] = new(sql.NullInt64)
-		case medmaker.FieldName, medmaker.FieldURL:
+		case medmaker.FieldName, medmaker.FieldURL, medmaker.FieldFaviconURL:
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -64,6 +66,12 @@ func (mm *MedMaker) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field url", values[i])
 			} else if value.Valid {
 				mm.URL = value.String
+			}
+		case medmaker.FieldFaviconURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field favicon_url", values[i])
+			} else if value.Valid {
+				mm.FaviconURL = value.String
 			}
 		default:
 			mm.selectValues.Set(columns[i], values[i])
@@ -106,6 +114,9 @@ func (mm *MedMaker) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("url=")
 	builder.WriteString(mm.URL)
+	builder.WriteString(", ")
+	builder.WriteString("favicon_url=")
+	builder.WriteString(mm.FaviconURL)
 	builder.WriteByte(')')
 	return builder.String()
 }
