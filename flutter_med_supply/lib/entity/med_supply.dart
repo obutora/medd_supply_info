@@ -47,6 +47,7 @@ class MedSupply {
   }
 
   static final dateFormatter = DateFormat("yyyy-MM-dd hh:mm:ss");
+  static final dateFormattString = DateFormat("yyyy-MM-dd");
 
   factory MedSupply.fromJson(Map<String, dynamic> json) {
     final updatedAt = dateFormatter.parse(json['updated_at'] as String);
@@ -122,6 +123,19 @@ class MedSupply {
         return "供給停止";
       default:
         return "供給情報なし";
+    }
+  }
+
+  String expectLiftingStatusString() {
+    switch (expectLiftingStatus) {
+      case "pending":
+        return "不明";
+      case "promising":
+        return "改善見込みアリ";
+      case "promisingNot":
+        return "改善見込みナシ";
+      default:
+        return "情報なし";
     }
   }
 }

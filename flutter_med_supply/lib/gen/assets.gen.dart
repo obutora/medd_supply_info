@@ -14,6 +14,12 @@ import 'package:flutter/services.dart';
 class $AssetsImageGen {
   const $AssetsImageGen();
 
+  /// File path: assets/image/M-1024.png
+  AssetGenImage get m1024 => const AssetGenImage('assets/image/M-1024.png');
+
+  /// File path: assets/image/M-512.png
+  AssetGenImage get m512 => const AssetGenImage('assets/image/M-512.png');
+
   /// File path: assets/image/company.svg
   SvgGenImage get company => const SvgGenImage('assets/image/company.svg');
 
@@ -35,12 +41,37 @@ class $AssetsImageGen {
   AssetGenImage get faceNormal =>
       const AssetGenImage('assets/image/face_normal.png');
 
+  /// File path: assets/image/note.png
+  AssetGenImage get note => const AssetGenImage('assets/image/note.png');
+
+  /// File path: assets/image/recept.svg
+  SvgGenImage get recept => const SvgGenImage('assets/image/recept.svg');
+
+  /// File path: assets/image/shield.svg
+  SvgGenImage get shield => const SvgGenImage('assets/image/shield.svg');
+
   /// File path: assets/image/skelton.png
   AssetGenImage get skelton => const AssetGenImage('assets/image/skelton.png');
 
+  /// File path: assets/image/up.svg
+  SvgGenImage get up => const SvgGenImage('assets/image/up.svg');
+
   /// List of all assets
-  List<dynamic> get values =>
-      [company, down, faceBad, faceDown, faceGood, faceNormal, skelton];
+  List<dynamic> get values => [
+        m1024,
+        m512,
+        company,
+        down,
+        faceBad,
+        faceDown,
+        faceGood,
+        faceNormal,
+        note,
+        recept,
+        shield,
+        skelton,
+        up
+      ];
 }
 
 class Assets {
