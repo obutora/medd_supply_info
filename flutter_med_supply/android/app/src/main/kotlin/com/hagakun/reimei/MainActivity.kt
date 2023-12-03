@@ -1,4 +1,4 @@
-package com.example.flutter_med_supply
+package com.hagakun.reimei
 
 import io.flutter.embedding.android.FlutterActivity
 
