@@ -10,7 +10,7 @@ class CustomChip extends StatelessWidget {
 
   final Color chipColor;
   final Widget child;
-  final isBorderEnable;
+  final bool isBorderEnable;
 
   @override
   Widget build(BuildContext context) {

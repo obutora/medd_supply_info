@@ -70,74 +70,11 @@ class HomeScreen extends HookConsumerWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+          child: Stack(
+            // mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const SizedBox(height: 8),
-              Container(
-                decoration: BoxDecoration(
-                  color: kSurfaceWhite,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () async {
-                        homeKey.currentState!.openDrawer();
-                      },
-                      icon: const Icon(
-                        Icons.menu,
-                        color: kBgBlack,
-                      ),
-                    ),
-                    Flexible(
-                      child: TextField(
-                        controller: textController,
-                        cursorColor: kBgBlack,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: '薬の名前を入力してください',
-                        ),
-                        onChanged: (value) {
-                          searchMedWordNotifier.set(value);
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    searchMedWord.isNotEmpty
-                        ? IconButton(
-                            onPressed: () async {
-                              searchMedWordNotifier.clear();
-                              textController.clear();
-                              FocusScope.of(context).unfocus();
-                            },
-                            icon: const Icon(
-                              Icons.clear,
-                              color: kBgBlack,
-                            ),
-                          )
-                        : const SizedBox(),
-                    IconButton(
-                      onPressed: () async {
-                        dbNotifier.findByName(searchMedWord);
-                        FocusScope.of(context).unfocus();
-                        scrollController.animateTo(
-                          0,
-                          duration: const Duration(milliseconds: 600),
-                          curve: Curves.easeOutCirc,
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.search,
-                        color: kBgBlack,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
+              Padding(
+                padding: const EdgeInsets.only(top: 72),
                 child: ListView.builder(
                   controller: scrollController,
                   itemCount: medSupplies.length,
@@ -150,7 +87,72 @@ class HomeScreen extends HookConsumerWidget {
                     );
                   },
                 ),
-              )
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: kSurfaceWhite,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          homeKey.currentState!.openDrawer();
+                        },
+                        icon: const Icon(
+                          Icons.menu,
+                          color: kBgBlack,
+                        ),
+                      ),
+                      Flexible(
+                        child: TextField(
+                          controller: textController,
+                          cursorColor: kBgBlack,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: '薬の名前を入力してください',
+                          ),
+                          onChanged: (value) {
+                            searchMedWordNotifier.set(value);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      searchMedWord.isNotEmpty
+                          ? IconButton(
+                              onPressed: () async {
+                                searchMedWordNotifier.clear();
+                                textController.clear();
+                                FocusScope.of(context).unfocus();
+                              },
+                              icon: const Icon(
+                                Icons.clear,
+                                color: kBgBlack,
+                              ),
+                            )
+                          : const SizedBox(),
+                      IconButton(
+                        onPressed: () async {
+                          dbNotifier.findByName(searchMedWord);
+                          FocusScope.of(context).unfocus();
+                          scrollController.animateTo(
+                            0,
+                            duration: const Duration(milliseconds: 600),
+                            curve: Curves.easeOutCirc,
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.search,
+                          color: kBgBlack,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -177,272 +179,261 @@ class MedCard extends HookConsumerWidget {
           color: kSurfaceWhite,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Flexible(
-          child: Row(
-            children: [
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        GenericChip(med: med),
-                        const SizedBox(width: 4),
-                        CustomChip(
-                          chipColor: kSurfaceWhite,
-                          isBorderEnable: true,
-                          child: Row(
-                            children: [
-                              MakerIcon(med: med),
-                              const SizedBox(width: 4),
-                              Text(
-                                med.maker,
-                                style: kDescription(),
-                              ),
-                            ],
-                          ),
+        child: Row(
+          children: [
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      GenericChip(med: med),
+                      const SizedBox(width: 4),
+                      CustomChip(
+                        chipColor: kSurfaceWhite,
+                        isBorderEnable: true,
+                        child: Row(
+                          children: [
+                            MakerIcon(med: med),
+                            const SizedBox(width: 4),
+                            Text(
+                              med.maker,
+                              style: kDescription(),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      med.brandName,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: kBgBlack,
                       ),
+                      const SizedBox(width: 8),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    med.brandName,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: kBgBlack,
                     ),
-                    const SizedBox(height: 4),
-                    Row(
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      SupplyChip(med: med),
+                      const SizedBox(width: 4),
+                      ShipmentChip(med: med),
+                      // const SizedBox(width: 4),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  if (isOpen.value)
+                    Column(
                       children: [
-                        SupplyChip(med: med),
-                        const SizedBox(width: 4),
-                        ShipmentChip(med: med),
-                        // const SizedBox(width: 4),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    if (isOpen.value)
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '改善予定',
-                                    style: kDescription(),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    med.expectLiftingStatusString(),
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: kBgBlack,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              med.expectLiftingDescription.isNotEmpty &&
-                                      med.expectLiftingDescription != '－' &&
-                                      med.expectLiftingDescription != '未定'
-                                  ? Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const SizedBox(width: 12),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '改善予定詳細',
-                                              style: kDescription(),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              med.expectLiftingDescription,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                color: kBgBlack,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    )
-                                  : const SizedBox(),
-                              const SizedBox(width: 16),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '更新日時',
-                                    style: kDescription(),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    MedSupply.dateFormattString
-                                        .format(med.updatedAt),
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: kBgBlack,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          // FutureBuilder<bool>(
-                          //     future: canLaunchUrl(url),
-                          //     builder: (context, snapshot) {
-                          //       print(snapshot.data);
-                          //       if (snapshot.hasError) {
-                          //         return const SizedBox();
-                          //       }
-
-                          //       if (!snapshot.hasData || !snapshot.data!) {
-                          //         return const SizedBox();
-                          //       }
-                          //       return
-                          //     }),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 32),
-                            child: Column(
+                        Row(
+                          children: [
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  children: [
-                                    OutlinedButton(
-                                      style: OutlinedButton.styleFrom(
-                                        side: const BorderSide(
-                                          color: Colors.black26,
-                                          width: 1,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8),
-                                        child: Flexible(
-                                          child: Row(
-                                            children: [
-                                              MakerIcon(med: med, iconSize: 28),
-                                              const SizedBox(width: 8),
-                                              Text('${med.maker}のサイトを開く',
-                                                  style: kBody()),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      onPressed: () async {
-                                        try {
-                                          if (med.url.isEmpty) {
-                                            throw Exception();
-                                          }
-
-                                          await launchUrlString(
-                                            med.url,
-                                            mode:
-                                                LaunchMode.externalApplication,
-                                          );
-                                        } catch (e) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                'リンクが切れているようです\nGoogle検索ページを開きます',
-                                              ),
-                                            ),
-                                          );
-                                          launchUrlString(
-                                              'https://www.google.co.jp/search?q=${med.maker}+製薬');
-                                        }
-                                      },
-                                    ),
-                                    OutlinedButton(
-                                      style: OutlinedButton.styleFrom(
-                                        side: const BorderSide(
-                                          color: Colors.black26,
-                                          width: 1,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8),
-                                        child: Flexible(
-                                          child: Row(
-                                            children: [
-                                              Assets.image.note.image(
-                                                height: 28,
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Text('添付文書/IF等を開く',
-                                                  style: kBody()),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      onPressed: () async {
-                                        try {
-                                          if (med.url.isEmpty) {
-                                            throw Exception();
-                                          }
-
-                                          launchUrlString(
-                                            'https://www.pmda.go.jp/PmdaSearch/iyakuDetail/GeneralList/${med.yjBase}',
-                                            mode:
-                                                LaunchMode.externalApplication,
-                                          );
-                                        } catch (e) {
-                                          print(e);
-                                        }
-                                      },
-                                    ),
-                                  ],
+                                Text(
+                                  '改善予定',
+                                  style: kDescription(),
                                 ),
                                 const SizedBox(height: 4),
+                                Text(
+                                  med.expectLiftingStatusString(),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: kBgBlack,
+                                  ),
+                                ),
                               ],
                             ),
-                          ),
-
-                          const SizedBox(height: 8),
-                        ],
-                      ),
-                  ],
-                ),
-              ),
-              CircleAvatar(
-                backgroundColor: kBgBlack,
-                child: IconButton(
-                  color: kWhite,
-                  icon: isOpen.value
-                      ? Assets.image.up.svg(
-                          color: kWhite,
-                        )
-                      : Assets.image.down.svg(
-                          color: kWhite,
+                            med.expectLiftingDescription.isNotEmpty &&
+                                    med.expectLiftingDescription != '－' &&
+                                    med.expectLiftingDescription != '未定'
+                                ? Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const SizedBox(width: 12),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '改善予定詳細',
+                                            style: kDescription(),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            med.expectLiftingDescription,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: kBgBlack,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )
+                                : const SizedBox(),
+                            const SizedBox(width: 16),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '更新日時',
+                                  style: kDescription(),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  MedSupply.dateFormattString
+                                      .format(med.updatedAt),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: kBgBlack,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                  onPressed: () {
-                    isOpen.value = !isOpen.value;
-                  },
-                ),
-              )
-            ],
-          ),
+                        const SizedBox(height: 12),
+                        // FutureBuilder<bool>(
+                        //     future: canLaunchUrl(url),
+                        //     builder: (context, snapshot) {
+                        //       print(snapshot.data);
+                        //       if (snapshot.hasError) {
+                        //         return const SizedBox();
+                        //       }
+
+                        //       if (!snapshot.hasData || !snapshot.data!) {
+                        //         return const SizedBox();
+                        //       }
+                        //       return
+                        //     }),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 32),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                children: [
+                                  OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      side: const BorderSide(
+                                        color: Colors.black26,
+                                        width: 1,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
+                                      child: Row(
+                                        children: [
+                                          MakerIcon(med: med, iconSize: 28),
+                                          const SizedBox(width: 8),
+                                          Text('${med.maker}のサイトを開く',
+                                              style: kBody()),
+                                        ],
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      try {
+                                        if (med.url.isEmpty) {
+                                          throw Exception();
+                                        }
+
+                                        await launchUrlString(
+                                          med.url,
+                                          mode: LaunchMode.externalApplication,
+                                        );
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'リンクが切れているようです\nGoogle検索ページを開きます',
+                                            ),
+                                          ),
+                                        );
+                                        launchUrlString(
+                                            'https://www.google.co.jp/search?q=${med.maker}+製薬');
+                                      }
+                                    },
+                                  ),
+                                  OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      side: const BorderSide(
+                                        color: Colors.black26,
+                                        width: 1,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
+                                      child: Row(
+                                        children: [
+                                          Assets.image.note.image(
+                                            height: 28,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text('添付文書/IF等を開く', style: kBody()),
+                                        ],
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      try {
+                                        if (med.url.isEmpty) {
+                                          throw Exception();
+                                        }
+
+                                        launchUrlString(
+                                          'https://www.pmda.go.jp/PmdaSearch/iyakuDetail/GeneralList/${med.yjBase}',
+                                          mode: LaunchMode.externalApplication,
+                                        );
+                                      } catch (e) {
+                                        print(e);
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+            CircleAvatar(
+              backgroundColor: kBgBlack,
+              child: IconButton(
+                color: kWhite,
+                icon: isOpen.value
+                    ? Assets.image.up.svg(
+                        color: kWhite,
+                      )
+                    : Assets.image.down.svg(
+                        color: kWhite,
+                      ),
+                onPressed: () {
+                  isOpen.value = !isOpen.value;
+                },
+              ),
+            )
+          ],
         ));
   }
 }
@@ -459,16 +450,25 @@ class MakerIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget companyIcon() {
+      return Assets.image.company.svg(
+        height: iconSize,
+        color: Colors.black54,
+      );
+    }
+
+    // return companyIcon();
+
+    if (med.faviconUrl.isEmpty) {
+      return companyIcon();
+    }
     return CachedNetworkImage(
       imageUrl: med.faviconUrl,
       placeholder: (context, url) {
-        return const CircularProgressIndicator();
+        return companyIcon();
       },
       errorWidget: (context, url, error) {
-        return Assets.image.company.svg(
-          height: iconSize,
-          color: Colors.black54,
-        );
+        return companyIcon();
       },
       width: iconSize,
       height: iconSize,
