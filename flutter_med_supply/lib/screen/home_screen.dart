@@ -42,8 +42,8 @@ class HomeScreen extends HookConsumerWidget {
           backgroundColor: kWhite,
           child: ListView(
             children: [
-              DrawerHeader(
-                child: Text('MedKyu'),
+              const DrawerHeader(
+                child: Text('Reimei'),
               ),
               ListTile(
                 leading: Assets.image.recept.svg(
@@ -113,7 +113,7 @@ class HomeScreen extends HookConsumerWidget {
                           cursorColor: kBgBlack,
                           decoration: const InputDecoration(
                             border: InputBorder.none,
-                            hintText: '薬の名前を入力してください',
+                            hintText: '薬やメーカーの名前を入力してください',
                           ),
                           onChanged: (value) {
                             searchMedWordNotifier.set(value);
