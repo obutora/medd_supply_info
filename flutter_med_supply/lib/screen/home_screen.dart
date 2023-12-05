@@ -33,6 +33,16 @@ class HomeScreen extends HookConsumerWidget {
       return null;
     }, []);
 
+    Future<void> searchStart() async {
+      dbNotifier.findByName(searchMedWord);
+      FocusScope.of(context).unfocus();
+      scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeOutCirc,
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         key: homeKey,
@@ -118,6 +128,7 @@ class HomeScreen extends HookConsumerWidget {
                           onChanged: (value) {
                             searchMedWordNotifier.set(value);
                           },
+                          onSubmitted: (_) => searchStart(),
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -135,15 +146,7 @@ class HomeScreen extends HookConsumerWidget {
                             )
                           : const SizedBox(),
                       IconButton(
-                        onPressed: () async {
-                          dbNotifier.findByName(searchMedWord);
-                          FocusScope.of(context).unfocus();
-                          scrollController.animateTo(
-                            0,
-                            duration: const Duration(milliseconds: 600),
-                            curve: Curves.easeOutCirc,
-                          );
-                        },
+                        onPressed: () => searchStart(),
                         icon: const Icon(
                           Icons.search,
                           color: kBgBlack,
