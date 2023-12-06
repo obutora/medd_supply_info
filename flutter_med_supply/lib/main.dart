@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'MedKyu',
+      title: 'Reimei',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: kWhite),
         useMaterial3: true,

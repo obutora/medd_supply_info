@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_med_supply/components/animation/fade_animation.dart';
 import 'package:flutter_med_supply/const/const.dart';
 import 'package:flutter_med_supply/entity/med_supply.dart';
 import 'package:flutter_med_supply/gen/assets.gen.dart';
@@ -93,7 +94,10 @@ class HomeScreen extends HookConsumerWidget {
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 4),
-                      child: MedCard(med: med),
+                      child: FadeAnimation(
+                        duration: const Duration(milliseconds: 800),
+                        child: MedCard(med: med),
+                      ),
                     );
                   },
                 ),
@@ -211,6 +215,15 @@ class MedCard extends HookConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
+                    med.genericName,
+                    style: const TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
                     med.brandName,
                     style: const TextStyle(
                       fontSize: 16,
@@ -218,7 +231,7 @@ class MedCard extends HookConsumerWidget {
                       color: kBgBlack,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       SupplyChip(med: med),
@@ -356,6 +369,7 @@ class MedCard extends HookConsumerWidget {
                                           mode: LaunchMode.externalApplication,
                                         );
                                       } catch (e) {
+                                        // ignore: use_build_context_synchronously
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           const SnackBar(

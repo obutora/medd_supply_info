@@ -24,7 +24,7 @@ class LicenseScreen extends StatelessWidget {
             final packageInfo = snapshot.data!;
 
             return LicensePage(
-              applicationName: 'MedKyu', // アプリの名前
+              applicationName: 'Reimei', // アプリの名前
               applicationVersion: packageInfo.version, // バージョン
               // TODO: 後で設定
               // applicationIcon: Icon(Icons.car_repair), // アプリのアイコン
