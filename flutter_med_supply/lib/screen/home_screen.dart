@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_med_supply/components/animation/fade_animation.dart';
+import 'package:flutter_med_supply/components/animation/scale_animation.dart';
 import 'package:flutter_med_supply/const/const.dart';
 import 'package:flutter_med_supply/entity/med_supply.dart';
 import 'package:flutter_med_supply/gen/assets.gen.dart';
@@ -25,6 +26,7 @@ class HomeScreen extends HookConsumerWidget {
     final medSupplies = ref.watch(medSuppliesProvider);
     final dbNotifier = ref.watch(sqliteProviderProvider.notifier);
     final genericTags = ref.watch(genericNameTagProvider);
+    final genericTagsNotifier = ref.watch(genericNameTagProvider.notifier);
     final searchMedWord = ref.watch(searchMedWordProvider);
     final searchMedWordNotifier = ref.watch(searchMedWordProvider.notifier);
 
@@ -48,6 +50,7 @@ class HomeScreen extends HookConsumerWidget {
 
     void clear() {
       searchMedWordNotifier.clear();
+      genericTagsNotifier.clear();
       textController.clear();
       FocusScope.of(context).unfocus();
     }
@@ -138,13 +141,20 @@ class HomeScreen extends HookConsumerWidget {
                                     )),
                                 const SizedBox(height: 6),
                                 Expanded(
-                                  child: ListView(
+                                  child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
-                                    children: [
-                                      for (final tag in genericTags)
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 4),
+                                    itemCount: genericTags.length,
+                                    itemBuilder: (context, index) {
+                                      final tag = genericTags[index];
+
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 4),
+                                        child: ScaleAnimation(
+                                          delay: Duration(
+                                              milliseconds: 200 * index),
+                                          duration:
+                                              const Duration(milliseconds: 600),
                                           child: CustomChip(
                                             chipColor: kBgBlack,
                                             isBorderEnable: true,
@@ -158,7 +168,8 @@ class HomeScreen extends HookConsumerWidget {
                                             ),
                                           ),
                                         ),
-                                    ],
+                                      );
+                                    },
                                   ),
                                 ),
                               ],

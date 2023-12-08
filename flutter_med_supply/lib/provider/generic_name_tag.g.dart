@@ -6,7 +6,7 @@ part of 'generic_name_tag.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$genericNameTagHash() => r'cc32e4788c1ecfb6cb34cbd72df6c6536a21eed0';
+String _$genericNameTagHash() => r'767ae3087ef19781aa3b20e36a446e2f2d9cf5c8';
 
 /// See also [GenericNameTag].
 @ProviderFor(GenericNameTag)

@@ -31,4 +31,8 @@ class GenericNameTag extends _$GenericNameTag {
   void set(List<GenericNameTagProperty> tags) {
     state = tags;
   }
+
+  void clear() {
+    state = [];
+  }
 }
