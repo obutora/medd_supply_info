@@ -13,6 +13,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../components/custom_chip.dart';
+import '../provider/generic_name_tag.dart';
 
 final homeKey = GlobalKey<ScaffoldState>();
 
@@ -23,6 +24,7 @@ class HomeScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final medSupplies = ref.watch(medSuppliesProvider);
     final dbNotifier = ref.watch(sqliteProviderProvider.notifier);
+    final genericTags = ref.watch(genericNameTagProvider);
     final searchMedWord = ref.watch(searchMedWordProvider);
     final searchMedWordNotifier = ref.watch(searchMedWordProvider.notifier);
 
@@ -35,8 +37,26 @@ class HomeScreen extends HookConsumerWidget {
     }, []);
 
     Future<void> searchStart() async {
-      dbNotifier.findByName(searchMedWord);
       FocusScope.of(context).unfocus();
+      await dbNotifier.findByName(searchMedWord);
+      scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeOutCirc,
+      );
+    }
+
+    void clear() {
+      searchMedWordNotifier.clear();
+      textController.clear();
+      FocusScope.of(context).unfocus();
+    }
+
+    Future<void> tapTag(String name) async {
+      textController.text = name;
+      searchMedWordNotifier.set(name);
+
+      await dbNotifier.findByName(name);
       scrollController.animateTo(
         0,
         duration: const Duration(milliseconds: 600),
@@ -85,12 +105,75 @@ class HomeScreen extends HookConsumerWidget {
             // mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 72),
+                padding: const EdgeInsets.only(top: 64),
                 child: ListView.builder(
                   controller: scrollController,
                   itemCount: medSupplies.length,
                   itemBuilder: (context, index) {
                     final med = medSupplies[index];
+
+                    if (index == 0 &&
+                        genericTags.isNotEmpty &&
+                        genericTags.length > 1) {
+                      return Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: kSurfaceWhite,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            height: 80,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '一般名検索',
+                                  style: kCardTitle(),
+                                ),
+                                Text('複数の成分がヒットした場合に表示。タップするとその成分の薬を一覧表示します',
+                                    style: kDescription().copyWith(
+                                      fontWeight: FontWeight.w500,
+                                    )),
+                                const SizedBox(height: 6),
+                                Expanded(
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: [
+                                      for (final tag in genericTags)
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 4),
+                                          child: CustomChip(
+                                            chipColor: kBgBlack,
+                                            isBorderEnable: true,
+                                            onTap: () async {
+                                              await tapTag(tag.name);
+                                            },
+                                            child: Text(
+                                              tag.name,
+                                              style: kDescription()
+                                                  .copyWith(color: kWhite),
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4, bottom: 4),
+                            child: FadeAnimation(
+                              duration: const Duration(milliseconds: 800),
+                              child: MedCard(med: med),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 4),
@@ -104,60 +187,62 @@ class HomeScreen extends HookConsumerWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 4),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: kSurfaceWhite,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: () async {
-                          homeKey.currentState!.openDrawer();
-                        },
-                        icon: const Icon(
-                          Icons.menu,
-                          color: kBgBlack,
-                        ),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: kSurfaceWhite,
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                      Flexible(
-                        child: TextField(
-                          controller: textController,
-                          cursorColor: kBgBlack,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            hintText: '薬やメーカーの名前を入力してください',
+                      padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            onPressed: () async {
+                              homeKey.currentState!.openDrawer();
+                            },
+                            icon: const Icon(
+                              Icons.menu,
+                              color: kBgBlack,
+                            ),
                           ),
-                          onChanged: (value) {
-                            searchMedWordNotifier.set(value);
-                          },
-                          onSubmitted: (_) => searchStart(),
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      searchMedWord.isNotEmpty
-                          ? IconButton(
-                              onPressed: () async {
-                                searchMedWordNotifier.clear();
-                                textController.clear();
-                                FocusScope.of(context).unfocus();
-                              },
-                              icon: const Icon(
-                                Icons.clear,
-                                color: kBgBlack,
+                          Flexible(
+                            child: TextField(
+                              controller: textController,
+                              cursorColor: kBgBlack,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                hintText: '薬やメーカーの名前を入力してください',
                               ),
-                            )
-                          : const SizedBox(),
-                      IconButton(
-                        onPressed: () => searchStart(),
-                        icon: const Icon(
-                          Icons.search,
-                          color: kBgBlack,
-                        ),
+                              onChanged: (value) {
+                                searchMedWordNotifier.set(value);
+                              },
+                              onSubmitted: (_) => searchStart(),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          searchMedWord.isNotEmpty
+                              ? IconButton(
+                                  onPressed: () async {
+                                    clear();
+                                  },
+                                  icon: const Icon(
+                                    Icons.clear,
+                                    color: kBgBlack,
+                                  ),
+                                )
+                              : const SizedBox(),
+                          IconButton(
+                            onPressed: () => searchStart(),
+                            icon: const Icon(
+                              Icons.search,
+                              color: kBgBlack,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -199,6 +284,7 @@ class MedCard extends HookConsumerWidget {
                       CustomChip(
                         chipColor: kSurfaceWhite,
                         isBorderEnable: true,
+                        onTap: () {},
                         child: Row(
                           children: [
                             MakerIcon(med: med),
@@ -225,11 +311,7 @@ class MedCard extends HookConsumerWidget {
                   const SizedBox(height: 4),
                   Text(
                     med.brandName,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: kBgBlack,
-                    ),
+                    style: kCardTitle(),
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -504,6 +586,7 @@ class ShipmentChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomChip(
+      onTap: () {},
       chipColor: med.shipmentStatusColor(),
       child: Text(
         med.shipmentStatusString(),
@@ -527,6 +610,7 @@ class GenericChip extends StatelessWidget {
     final chipColor = med.isGeneric() ? kGreen : kBlue;
 
     return CustomChip(
+      onTap: () {},
       chipColor: chipColor,
       child: Text(
         chipText,
@@ -583,6 +667,7 @@ class SupplyChip extends StatelessWidget {
 
     return CustomChip(
       chipColor: supplyStatusColor(),
+      onTap: () {},
       child: Row(
         children: [
           statusIcon(),

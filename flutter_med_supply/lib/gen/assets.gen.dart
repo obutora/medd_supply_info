@@ -14,11 +14,11 @@ import 'package:flutter/services.dart';
 class $AssetsImageGen {
   const $AssetsImageGen();
 
-  /// File path: assets/image/M-1024.png
-  AssetGenImage get m1024 => const AssetGenImage('assets/image/M-1024.png');
-
   /// File path: assets/image/M-512.png
   AssetGenImage get m512 => const AssetGenImage('assets/image/M-512.png');
+
+  /// File path: assets/image/M_1024.png
+  AssetGenImage get m1024 => const AssetGenImage('assets/image/M_1024.png');
 
   /// File path: assets/image/company.svg
   SvgGenImage get company => const SvgGenImage('assets/image/company.svg');
@@ -58,8 +58,8 @@ class $AssetsImageGen {
 
   /// List of all assets
   List<dynamic> get values => [
-        m1024,
         m512,
+        m1024,
         company,
         down,
         faceBad,

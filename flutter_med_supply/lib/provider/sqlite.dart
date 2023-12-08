@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_med_supply/entity/med_supply.dart';
+import 'package:flutter_med_supply/provider/generic_name_tag.dart';
 import 'package:flutter_med_supply/provider/med_supplies.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sqflite/sqflite.dart';
@@ -61,11 +62,9 @@ class SqliteProvider extends _$SqliteProvider {
     final searchQueryPart = word
         .map((e) => "(generic_name like '%$e%' or brand_name like '%$e%')")
         .join(" and ");
-    // final searchQuery =
-    //     searchQueryPart.substring(0, searchQueryPart.length - 3);
 
-    print(searchQueryPart);
-    final res = await state!.rawQuery('''
+    // 検索カード表示用の結果を取得する
+    final medInfo = await state!.rawQuery('''
 select * 
 from med_supplies 
 join med_makers 
@@ -74,10 +73,26 @@ where
 	$searchQueryPart
 ''');
 
-    final model = res.map((e) => MedSupply.fromJson(e)).toList();
-    print(model);
-
+    // 検索カード用のproviderに結果を繁栄
+    final model = medInfo.map((e) => MedSupply.fromJson(e)).toList();
     ref.read(medSuppliesProvider.notifier).set(model);
+
+    // 同効薬の検索結果用の一般名リストを取得する
+    final nameTags = await state!.rawQuery('''
+select generic_name as name, count(*) as count
+from med_supplies 
+join med_makers 
+	on med_supplies.maker = med_makers.name
+where 
+	(generic_name like '%$words%' or brand_name like '%$words%')
+group by generic_name
+order by count desc
+''');
+
+    // 同効薬の検索結果用のproviderに結果を繁栄
+    final tags =
+        nameTags.map((e) => GenericNameTagProperty.fromJson(e)).toList();
+    ref.read(genericNameTagProvider.notifier).set(tags);
   }
 }
 
