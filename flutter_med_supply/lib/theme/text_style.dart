@@ -8,6 +8,14 @@ TextStyle kCardTitle() {
   );
 }
 
+TextStyle kH3() {
+  return const TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    color: Colors.black54,
+  );
+}
+
 TextStyle kBody() {
   return const TextStyle(
     fontSize: 12,

@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
         "excelize"
-    ]
+    ],
+    "dart.flutterSdkPath": ".fvm/flutter_sdk",
 }

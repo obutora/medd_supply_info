@@ -44,6 +44,9 @@ class $AssetsImageGen {
   /// File path: assets/image/note.png
   AssetGenImage get note => const AssetGenImage('assets/image/note.png');
 
+  /// File path: assets/image/pie.svg
+  SvgGenImage get pie => const SvgGenImage('assets/image/pie.svg');
+
   /// File path: assets/image/recept.svg
   SvgGenImage get recept => const SvgGenImage('assets/image/recept.svg');
 
@@ -67,6 +70,7 @@ class $AssetsImageGen {
         faceGood,
         faceNormal,
         note,
+        pie,
         recept,
         shield,
         skelton,

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_med_supply/entity/med_supply.dart';
 import 'package:flutter_med_supply/provider/generic_name_tag.dart';
 import 'package:flutter_med_supply/provider/med_supplies.dart';
+import 'package:flutter_med_supply/provider/pie_data.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -89,10 +90,24 @@ group by generic_name
 order by count desc
 ''');
 
-    // 同効薬の検索結果用のproviderに結果を繁栄
+    // 同効薬の検索結果用のproviderに結果を反映
     final tags =
         nameTags.map((e) => GenericNameTagProperty.fromJson(e)).toList();
     ref.read(genericNameTagProvider.notifier).set(tags);
+
+    // 円グラフ用のproviderに結果を反映
+    final pie = await pieData(words);
+    ref.read(pieDataProvider.notifier).set(pie);
+  }
+
+  Future<List<PieDataProperty>> pieData(String word) async {
+    // 名称が一つの場合は、円グラフを表示する
+    final pieData = await state!.rawQuery('''
+select supply_status, count(*) as count from med_supplies
+where (generic_name like '%$word%' or brand_name like '%$word%')
+group by supply_status
+''');
+    return pieData.map((e) => PieDataProperty.fromJson(e)).toList();
   }
 }
 

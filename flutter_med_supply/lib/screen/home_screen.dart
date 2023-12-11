@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_med_supply/components/animation/fade_animation.dart';
@@ -13,6 +14,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../components/custom_chip.dart';
 import '../components/med_card.dart';
+import '../components/pie_chart.dart';
 import '../provider/generic_name_tag.dart';
 
 final homeKey = GlobalKey<ScaffoldState>();
@@ -104,7 +106,6 @@ class HomeScreen extends HookConsumerWidget {
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Stack(
-            // mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 64),
@@ -114,66 +115,73 @@ class HomeScreen extends HookConsumerWidget {
                   itemBuilder: (context, index) {
                     final med = medSupplies[index];
 
-                    if (index == 0 &&
-                        genericTags.isNotEmpty &&
-                        genericTags.length > 1) {
+                    if (index == 0) {
                       return Column(
                         children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: kSurfaceWhite,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 8),
-                            height: 80,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '一般名検索',
-                                  style: kCardTitle(),
-                                ),
-                                Text('複数の成分がヒットした場合に表示。タップするとその成分の薬を一覧表示します',
-                                    style: kDescription().copyWith(
-                                      fontWeight: FontWeight.w500,
-                                    )),
-                                const SizedBox(height: 6),
-                                Expanded(
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: genericTags.length,
-                                    itemBuilder: (context, index) {
-                                      final tag = genericTags[index];
-
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 4),
-                                        child: ScaleAnimation(
-                                          delay: Duration(
-                                              milliseconds: 200 * index),
-                                          duration:
-                                              const Duration(milliseconds: 600),
-                                          child: CustomChip(
-                                            chipColor: kBgBlack,
-                                            isBorderEnable: true,
-                                            onTap: () async {
-                                              await tapTag(tag.name);
-                                            },
-                                            child: Text(
-                                              tag.name,
-                                              style: kDescription()
-                                                  .copyWith(color: kWhite),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
+                          genericTags.isNotEmpty && genericTags.length > 1
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                    color: kSurfaceWhite,
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                  height: 80,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '一般名検索',
+                                        style: kCardTitle(),
+                                      ),
+                                      Text(
+                                          '複数の成分がヒットした場合に表示。タップするとその成分の薬を一覧表示します',
+                                          style: kDescription().copyWith(
+                                            fontWeight: FontWeight.w500,
+                                          )),
+                                      const SizedBox(height: 6),
+                                      Expanded(
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: genericTags.length,
+                                          itemBuilder: (context, index) {
+                                            final tag = genericTags[index];
+
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 4),
+                                              child: ScaleAnimation(
+                                                delay: Duration(
+                                                    milliseconds: 200 * index),
+                                                duration: const Duration(
+                                                    milliseconds: 600),
+                                                child: CustomChip(
+                                                  chipColor: kBgBlack,
+                                                  isBorderEnable: true,
+                                                  onTap: () async {
+                                                    await tapTag(tag.name);
+                                                  },
+                                                  child: Text(
+                                                    tag.name,
+                                                    style: kDescription()
+                                                        .copyWith(
+                                                            color: kWhite),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const SizedBox(),
+                          const SizedBox(height: 4),
+                          const FadeAnimation(
+                              duration: Duration(milliseconds: 800),
+                              child: SupplyPieChart()),
                           Padding(
                             padding: const EdgeInsets.only(top: 4, bottom: 4),
                             child: FadeAnimation(

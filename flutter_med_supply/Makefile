@@ -1,6 +1,6 @@
 .PHONY: watch
 watch:
-	flutter pub run build_runner watch --delete-conflicting-outputs
+	fvm flutter pub run build_runner watch --delete-conflicting-outputs
 
 .PHONY: icon
 icon:
