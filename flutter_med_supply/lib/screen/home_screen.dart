@@ -1,4 +1,5 @@
-import 'package:fl_chart/fl_chart.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_med_supply/components/animation/fade_animation.dart';
@@ -34,9 +35,76 @@ class HomeScreen extends HookConsumerWidget {
     final textController = useTextEditingController();
     final scrollController = useScrollController();
 
+    // final _streamSubscriptions = <StreamSubscription<dynamic>>[];
+
+    // bool isScrolling = false;
+
     useEffect(() {
       dbNotifier.init();
-      return null;
+
+      //   // _streamSubscriptions.add(
+      //   //   userAccelerometerEventStream(
+      //   //     // samplingPeriod: SensorInterval.uiInterval,
+      //   //     samplingPeriod: const Duration(milliseconds: 500),
+      //   //   ).listen(
+      //   //     (event) {
+      //   //       if (event.y > 2) {
+      //   //         scrollController.animateTo(
+      //   //           scrollController.position.pixels -
+      //   //               scrollController.position.viewportDimension,
+      //   //           duration: const Duration(milliseconds: 1200),
+      //   //           curve: Curves.easeOutCirc,
+      //   //         );
+      //   //         print('y: ${event.y}');
+      //   //       }
+
+      //   //       if (event.y < -2) {
+      //   //         scrollController.animateTo(
+      //   //           scrollController.position.pixels +
+      //   //               scrollController.position.viewportDimension,
+      //   //           duration: const Duration(milliseconds: 1200),
+      //   //           curve: Curves.easeOutCirc,
+      //   //         );
+      //   //         print('y: ${event.y}');
+      //   //       }
+
+      //   //       if (event.z > 9 || event.z < -9) {
+      //   //         print('z: ${event.z}');
+      //   //       }
+      //   //     },
+      //   //   ),
+      //   // );
+
+      //   _streamSubscriptions.add(gyroscopeEventStream(
+      //     // samplingPeriod: SensorInterval.uiInterval,
+      //     samplingPeriod: const Duration(milliseconds: 160),
+      //   ).listen((event) {
+      //     if (event.y > 0.2) {
+      //       // print('y: ${event.y}');
+      //       scrollController.animateTo(
+      //         scrollController.position.pixels + (333 * event.y),
+      //         duration: const Duration(milliseconds: 666),
+      //         curve: Curves.easeOut,
+      //       );
+      //       isScrolling = false;
+      //     }
+
+      //     // if (event.y < -4.5) {
+      //     //   print('y: ${event.y}');
+      //     //   scrollController.animateTo(
+      //     //     scrollController.position.pixels,
+      //     //     duration: Duration.zero,
+      //     //     curve: Curves.ease,
+      //     //   );
+      //     // }
+      //   }));
+
+      //   return () {
+      //     _streamSubscriptions.forEach((element) {
+      //       element.cancel();
+      //     });
+      //   };
+      return;
     }, []);
 
     Future<void> searchStart() async {
@@ -184,11 +252,11 @@ class HomeScreen extends HookConsumerWidget {
                               child: SupplyPieChart()),
                           Padding(
                             padding: const EdgeInsets.only(top: 4, bottom: 4),
-                            child: FadeAnimation(
-                              duration: const Duration(milliseconds: 800),
-                              child: MedCard(med: med),
-                            ),
+                            // child: FadeAnimation(
+                            // duration: const Duration(milliseconds: 800),
+                            child: MedCard(med: med),
                           ),
+                          // ),
                         ],
                       );
                     }
