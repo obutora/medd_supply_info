@@ -63,10 +63,6 @@ func main() {
 	}
 
 	// f := GetFaviconUrl("https://www.nichiiko.co.jp/")
-	// f := GetFaviconUrl("https://www.wakamoto-pharm.co.jp/medical/")
-	// f := GetFaviconUrl("https://med.nipro.co.jp/pharmaceuticals")
-	// f := GetFaviconUrl("https://kk-takamitsu.co.jp/product/")
-	// f := GetFaviconUrl("https://www.ayumi-pharma.com/confirmation/")
 	// fmt.Printf("faviconUrl: %v\n", f)
 
 }
