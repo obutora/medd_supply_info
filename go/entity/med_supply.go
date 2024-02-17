@@ -56,33 +56,48 @@ func MedSupplyFromRow(row []string) MedSupply {
 }
 
 func GetTime(timeString string) time.Time {
-	re, _ := regexp.Compile(`\b(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),\s(January|February|March|April|May|June|July|August|September|October|November|December)\s(\d{2}),\s(\d{4})\b`)
-	matches := re.FindStringSubmatch(timeString)
+	// re, _ := regexp.Compile(`\b(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),\s(January|February|March|April|May|June|July|August|September|October|November|December)\s(\d{2}),\s(\d{4})\b`)
+	// matches := re.FindStringSubmatch(timeString)
 
-	monthMap := map[string]int{
-		"January":   1,
-		"February":  2,
-		"March":     3,
-		"April":     4,
-		"May":       5,
-		"June":      6,
-		"July":      7,
-		"August":    8,
-		"September": 9,
-		"October":   10,
-		"November":  11,
-		"December":  12,
+	// monthMap := map[string]int{
+	// 	"January":   1,
+	// 	"February":  2,
+	// 	"March":     3,
+	// 	"April":     4,
+	// 	"May":       5,
+	// 	"June":      6,
+	// 	"July":      7,
+	// 	"August":    8,
+	// 	"September": 9,
+	// 	"October":   10,
+	// 	"November":  11,
+	// 	"December":  12,
+	// }
+
+
+	// if matches != nil && len(matches) > 2 {
+	// 	year, _ := strconv.Atoi(matches[3])
+	// 	month := monthMap[matches[1]] // 月の名前を数字に変換
+	// 	day, _ := strconv.Atoi(matches[2])
+
+	// 	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
+	// }
+	// return time.Time{}
+
+	re, _ := regexp.Compile(`(\d{4})年(\d{1,2})月(\d{1,2})日`)
+	r := re.FindAllStringSubmatch(timeString, -1)
+	if len(r) == 0 {
+		return time.Time{}
 	}
 
+	d := r[0]
 
-	if matches != nil && len(matches) > 2 {
-		year, _ := strconv.Atoi(matches[3])
-		month := monthMap[matches[1]] // 月の名前を数字に変換
-		day, _ := strconv.Atoi(matches[2])
+	y, _ := strconv.Atoi(d[1])
+	m, _ := strconv.Atoi(d[2])
+	da, _ := strconv.Atoi(d[3])
 
-		return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
-	}
-	return time.Time{}
+	return time.Date(y, time.Month(m), da, 0, 0, 0, 0, time.UTC)
+
 }
 
 func GetYjBase(yjCode string) string {
