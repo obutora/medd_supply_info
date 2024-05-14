@@ -11,7 +11,7 @@
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.example.flutterMedSupply</key>
-		<string>MedSupply Provisioning Profile for Production</string>
+		<string>com.example.flutterMedSupply</string>
 	</dict>
 	<key>signingCertificate</key>
 	<string>Apple Distribution</string>
