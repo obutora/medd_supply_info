@@ -1,0 +1,30 @@
+name: Setup Flutter
+description: Setup Flutter
+inputs:
+  dotmoney-secret-key:
+    description: Dotmoney Secret Key
+    required: false
+  sentry-dsn:
+    description: Sentry DSN
+    required: false
+runs:
+  using: composite
+
+  steps:
+    - name: Install flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: 3.19.4
+        channel: stable
+        cache: true
+
+    - name: Install flutter dependencies
+      shell: bash
+      run: cd client/packages/app && flutter pub get
+
+    # - name: Create .env file
+    #   shell: bash
+    #   run: |
+    #     touch {client/packages/app/.env.development,client/packages/app/.env}
+    #     echo 'DOTMONEY_SECRET_KEY=${{ inputs.dotmoney-secret-key }}' >> client/packages/app/.env
+    #     echo 'SENTRY_DSN=${{ inputs.sentry-dsn }}' >> client/packages/app/.env

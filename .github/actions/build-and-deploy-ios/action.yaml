@@ -1,0 +1,54 @@
+name: Build and Deploy iOS
+description: Build and Deploy iOS
+inputs:
+  provisioning-profile:
+    description: Provisioning Profile
+    required: true
+  certificates-p12:
+    description: Certificates P12
+    required: true
+  certificates-p12-password:
+    description: Certificates P12 Password
+    required: true
+  apple-id:
+    description: Apple ID
+    required: true
+  apple-app-password:
+    description: Apple App Password
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Xcode Setting
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.2'
+
+    - name: Import Provisioning Profile
+      shell: bash
+      run: |
+        mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+        echo -n ${{ inputs.provisioning-profile }} | base64 -d > ~/Library/MobileDevice/Provisioning\ Profiles/ComMedInfoApp.mobileprovision
+
+    - name: Import Code-Signing Certificates
+      uses: apple-actions/import-codesign-certs@v1
+      with:
+        p12-file-base64: ${{ inputs.certificates-p12 }}
+        p12-password: ${{ inputs.certificates-p12-password }}
+
+    - name: Setup Flutter
+      uses: ./.github/actions/setup-flutter
+
+    - name: Build ipa
+      shell: bash
+      run: cd client/packages/app && flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions-prod.plist
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifact
+        path: ./client/packages/app/build/ios/ipa/app.ipa
+
+    - name: Upload to App Store Connect
+      shell: bash
+      run: xcrun altool --upload-app --type ios -f ./client/packages/app/build/ios/ipa/app.ipa -u ${{ inputs.apple-id }} -p ${{ inputs.apple-app-password }}

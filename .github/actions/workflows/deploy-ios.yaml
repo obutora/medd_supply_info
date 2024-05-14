@@ -1,0 +1,26 @@
+name: Build and Deploy iOS
+
+defaults:
+  run:
+    working-directory: ./flutter_med_supply
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ios:
+    name: Build and Deploy iOS
+    runs-on: macos-13-xlarge
+    env:
+      TZ: 'Asia/Tokyo'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and Deploy iOS
+        uses: ./.github/actions/build-and-deploy-ios
+        with:
+          provisioning-profile: ${{ secrets.PROVISIONING_PROFILE }}
+          certificates-p12: ${{ secrets.CERTIFICATES_P12 }}
+          certificates-p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
+          apple-id: ${{ secrets.APPLE_ID }}
+          apple-app-password: ${{ secrets.APPLE_APP_PASSWORD }}
