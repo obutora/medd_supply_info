@@ -41,7 +41,7 @@ runs:
 
     - name: Build ipa
       shell: bash
-      run: cd flutter_med_supply && flutter build ipa --release --allowProvisioningUpdates --export-options-plist=ios/Runner/ExportOptions.plist
+      run: cd flutter_med_supply && flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions.plist
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
