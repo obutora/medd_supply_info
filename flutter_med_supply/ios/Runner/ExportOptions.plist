@@ -11,7 +11,7 @@
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.example.flutterMedSupply</key>
-		<string>com.example.flutterMedSupply</string>
+		<string>github_actions_Reimei(TL3XY62XT9.com.example.flutt</string>
 	</dict>
 	<key>signingCertificate</key>
 	<string>Apple Distribution</string>
