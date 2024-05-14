@@ -90,7 +90,7 @@ func getMedSupplyFromFile(f *excelize.File) ([]entity.MedSupply, error) {
 
 func getMedMakerFromFile(f *excelize.File) ([]entity.MedMaker, error) {
 	// メーカー名・HP取得
-	s4Name := f.GetSheetName(4)
+	s4Name := f.GetSheetName(3)
 	rows, err := f.GetRows(s4Name)
 	if err != nil {
 		return nil, fmt.Errorf("get rows error: %v\n", err)

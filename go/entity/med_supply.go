@@ -26,15 +26,13 @@ type MedSupply struct {
 }
 
 func MedSupplyFromRow(row []string) MedSupply {
-	var arr [15]string
-	for i, v := range row {
-		arr[i] = v
-	}
+	var arr [17]string
+	copy(arr[:], row)
 
 	t := GetTime(arr[13])
-	ship := ConvertShipStatus(arr[7])
-	sup := ConvertSupplyStatus(arr[8])
-	ls := ConvertLiftingStatus(arr[10])
+	ship := ConvertShipStatus(arr[15])
+	sup := ConvertSupplyStatus(arr[11])
+	ls := ConvertLiftingStatus(arr[13])
 	r := ConvertReason(arr[12])
 
 	return MedSupply{
@@ -43,8 +41,8 @@ func MedSupplyFromRow(row []string) MedSupply {
 		Unit:                     row[2],
 		YjCode:                   row[3],
 		YjBase:                   GetYjBase(row[3]),
-		Maker:                    row[4],
-		BrandName:                arr[5],
+		Maker:                    row[5],
+		BrandName:                arr[4],
 		SalesCategory:            arr[6],
 		ShipmentStatus:           ship,
 		SupplyStatus:             sup,
