@@ -20,11 +20,11 @@ runs:
 
     - name: Install flutter dependencies
       shell: bash
-      run: cd client/packages/app && flutter pub get
+      run: cd flutter_med_supply && flutter pub get
 
     # - name: Create .env file
     #   shell: bash
     #   run: |
-    #     touch {client/packages/app/.env.development,client/packages/app/.env}
-    #     echo 'DOTMONEY_SECRET_KEY=${{ inputs.dotmoney-secret-key }}' >> client/packages/app/.env
-    #     echo 'SENTRY_DSN=${{ inputs.sentry-dsn }}' >> client/packages/app/.env
+    #     touch {flutter_med_supply/.env.development,flutter_med_supply/.env}
+    #     echo 'DOTMONEY_SECRET_KEY=${{ inputs.dotmoney-secret-key }}' >> flutter_med_supply/.env
+    #     echo 'SENTRY_DSN=${{ inputs.sentry-dsn }}' >> flutter_med_supply/.env

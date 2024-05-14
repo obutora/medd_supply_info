@@ -41,14 +41,14 @@ runs:
 
     - name: Build ipa
       shell: bash
-      run: cd client/packages/app && flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions-prod.plist
+      run: cd flutter_med_supply && flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions-prod.plist
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: artifact
-        path: ./client/packages/app/build/ios/ipa/app.ipa
+        path: ./flutter_med_supply/build/ios/ipa/app.ipa
 
     - name: Upload to App Store Connect
       shell: bash
-      run: xcrun altool --upload-app --type ios -f ./client/packages/app/build/ios/ipa/app.ipa -u ${{ inputs.apple-id }} -p ${{ inputs.apple-app-password }}
+      run: xcrun altool --upload-app --type ios -f ./flutter_med_supply/build/ios/ipa/app.ipa -u ${{ inputs.apple-id }} -p ${{ inputs.apple-app-password }}
