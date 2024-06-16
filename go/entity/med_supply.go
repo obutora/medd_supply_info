@@ -29,11 +29,13 @@ func MedSupplyFromRow(row []string) MedSupply {
 	var arr [17]string
 	copy(arr[:], row)
 
-	t := GetTime(arr[13])
+	t := GetTime(arr[16])
 	ship := ConvertShipStatus(arr[15])
 	sup := ConvertSupplyStatus(arr[11])
 	ls := ConvertLiftingStatus(arr[13])
 	r := ConvertReason(arr[12])
+
+	fmt.Printf("%s\n", t)
 
 	return MedSupply{
 		DoseForm:                 row[0],
@@ -71,7 +73,6 @@ func GetTime(timeString string) time.Time {
 	// 	"November":  11,
 	// 	"December":  12,
 	// }
-
 
 	// if matches != nil && len(matches) > 2 {
 	// 	year, _ := strconv.Atoi(matches[3])

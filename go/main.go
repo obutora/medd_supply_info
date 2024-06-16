@@ -57,6 +57,9 @@ func main() {
 	}
 	fmt.Printf("medMakers: %v\n", len(mm))
 
+	// 重複を排除
+	mm = uniqueMedMakersByName(mm)
+
 	err = InsertMedMaker(ctx, client, mm)
 	if err != nil {
 		log.Fatalf("InsertMedMaker error: %v\n", err)
@@ -65,6 +68,20 @@ func main() {
 	// f := GetFaviconUrl("https://www.nichiiko.co.jp/")
 	// fmt.Printf("faviconUrl: %v\n", f)
 
+}
+
+func uniqueMedMakersByName(medMakers []entity.MedMaker) []entity.MedMaker {
+	uniqueNames := make(map[string]struct{})
+	var result []entity.MedMaker
+
+	for _, medMaker := range medMakers {
+		if _, ok := uniqueNames[medMaker.Name]; !ok {
+			uniqueNames[medMaker.Name] = struct{}{}
+			result = append(result, medMaker)
+		}
+	}
+
+	return result
 }
 
 func getMedSupplyFromFile(f *excelize.File) ([]entity.MedSupply, error) {
@@ -93,10 +110,11 @@ func getMedMakerFromFile(f *excelize.File) ([]entity.MedMaker, error) {
 	s4Name := f.GetSheetName(3)
 	rows, err := f.GetRows(s4Name)
 	if err != nil {
-		return nil, fmt.Errorf("get rows error: %v\n", err)
+		return nil, fmt.Errorf("get rows error: %v", err)
 	}
 
 	var medMakers []entity.MedMaker
+
 	for i, row := range rows {
 		if i == 0 {
 			continue
@@ -114,6 +132,7 @@ func getMedMakerFromFile(f *excelize.File) ([]entity.MedMaker, error) {
 				Url:        url[0],
 				FaviconUrl: GetFaviconUrl(url[0]),
 			}
+			medMakers = append(medMakers, d)
 		} else {
 
 			d = entity.MedMaker{
@@ -121,9 +140,13 @@ func getMedMakerFromFile(f *excelize.File) ([]entity.MedMaker, error) {
 				Url:        "",
 				FaviconUrl: "",
 			}
+			medMakers = append(medMakers, d)
 		}
 
-		medMakers = append(medMakers, d)
+	}
+
+	for _, m := range medMakers {
+		fmt.Printf("medmaker: %v\n", m)
 	}
 
 	return medMakers, nil
