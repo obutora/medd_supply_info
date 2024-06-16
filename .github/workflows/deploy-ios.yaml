@@ -10,7 +10,7 @@ on:
 jobs:
   ios:
     name: Build and Deploy iOS
-    runs-on: macos-13-xlarge
+    runs-on: macos-14
     env:
       TZ: 'Asia/Tokyo'
     steps:
