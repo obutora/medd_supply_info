@@ -2,7 +2,7 @@ name: Build and Deploy Android
 
 defaults:
   run:
-    working-directory: ./client/packages/app
+    working-directory: ./flutter_med_supply
 
 on:
   workflow_dispatch:
