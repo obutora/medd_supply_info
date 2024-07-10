@@ -61,13 +61,13 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: artifact
-        path: ./flutter_med_supply/build/app/outputs/bundle/productionRelease/app-production-release.aab
+        path: ./flutter_med_supply/build/app/outputs/bundle/productionRelease/app-release.aab
 
     - name: Upload to Google Play Console
       uses: r0adkll/upload-google-play@v1
       with:
         serviceAccountJson: flutter_med_supply/android/service-account-key.json
         packageName: com.pint_app
-        releaseFiles: ./flutter_med_supply/build/app/outputs/bundle/productionRelease/app-production-release.aab
+        releaseFiles: ./flutter_med_supply/build/app/outputs/bundle/productionRelease/app-release.aab
         track: internal
         status: draft
