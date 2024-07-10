@@ -1,0 +1,26 @@
+name: Build and Deploy Android
+
+defaults:
+  run:
+    working-directory: ./client/packages/app
+
+on:
+  workflow_dispatch:
+
+jobs:
+  android:
+    name: Build and Deploy Android
+    runs-on: ubuntu-latest
+    env:
+      TZ: 'Asia/Tokyo'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and Deploy Android
+        uses: ./.github/actions/build-and-deploy-android
+        with:
+          android-key-jks: ${{ secrets.ANDROID_KEY_JKS }}
+          service-account-key-json: ${{ secrets.SERVICE_ACCOUNT_KEY_BASE64 }}
+          android-store-password: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          android-key-password: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          android-key-alias: ${{ secrets.ANDROID_KEY_ALIAS }}

@@ -1,1 +1,65 @@
 # 
+name: Build and Deploy Android
+description: Build and Deploy Android
+inputs:
+  android-key-jks:
+    description: Android Key jks
+    required: true
+  service-account-key-json:
+    description: Service Account Key Json
+    required: true
+  android-store-password:
+    description: Android Store Password
+    required: true
+  android-key-password:
+    description: Android Key Password
+    required: true
+  android-key-alias:
+    description: Android Key Alias
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Setup java 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+
+    - name: Create upload-key.jks
+      shell: bash
+      run: echo -n ${{ inputs.android-key-jks }} | base64 -d > client/packages/app/android/app/upload-key.jks
+
+    - name: Create service-account-key.json
+      shell: bash
+      run: echo -n ${{ inputs.service-account-key-json }} | base64 -d > client/packages/app/android/service-account-key.json
+
+    - name: Create key.properties
+      shell: bash
+      run: |
+        echo 'storePassword=${{ inputs.android-store-password }}' >> client/packages/app/android/key.properties
+        echo 'keyPassword=${{ inputs.android-key-password }}' >> client/packages/app/android/key.properties
+        echo 'keyAlias=${{ inputs.android-key-alias }}' >> client/packages/app/android/key.properties
+        echo 'storeFile=upload-key.jks' >> client/packages/app/android/key.properties
+
+    - name: Setup Flutter
+      uses: ./.github/actions/setup-flutter
+
+    - name: Build aab
+      shell: bash
+      run: cd client/packages/app && flutter build appbundle --release --flavor production --dart-define=FLAVOR=production
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifact
+        path: ./client/packages/app/build/app/outputs/bundle/productionRelease/app-production-release.aab
+
+    - name: Upload to Google Play Console
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJson: client/packages/app/android/service-account-key.json
+        packageName: com.pint_app
+        releaseFiles: ./client/packages/app/build/app/outputs/bundle/productionRelease/app-production-release.aab
+        track: internal
+        status: draft

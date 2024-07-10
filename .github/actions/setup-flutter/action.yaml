@@ -1,12 +1,6 @@
 name: Setup Flutter
 description: Setup Flutter
-inputs:
-  dotmoney-secret-key:
-    description: Dotmoney Secret Key
-    required: false
-  sentry-dsn:
-    description: Sentry DSN
-    required: false
+
 runs:
   using: composite
 
@@ -14,7 +8,7 @@ runs:
     - name: Install flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: 3.19.4
+        flutter-version: 3.22.2
         channel: stable
         cache: true
 
