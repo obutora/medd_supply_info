@@ -25,9 +25,14 @@ runs:
     #   with:
     #     distribution: 'zulu'
     #     java-version: '17'
-    - name: echo
+    - name: Debug keystore decoding
       shell: bash
-      run: echo ${{ inputs.android-key-jks }}
+      env:
+        ENCODED_KEYSTORE: ${{ inputs.android-key-jks }}
+      run: |
+        echo "Encoded length: ${#ENCODED_KEYSTORE}"
+        echo "First 20 characters: ${ENCODED_KEYSTORE:0:20}..."
+        echo "Last 20 characters: ...${ENCODED_KEYSTORE: -20}"
 
     - name: Create upload-key.jks
       shell: bash
