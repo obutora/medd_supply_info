@@ -26,14 +26,14 @@ type MedSupply struct {
 }
 
 func MedSupplyFromRow(row []string) MedSupply {
-	var arr [17]string
+	var arr [18]string
 	copy(arr[:], row)
 
-	t := GetTime(arr[16])
-	ship := ConvertShipStatus(arr[15])
-	sup := ConvertSupplyStatus(arr[11])
-	ls := ConvertLiftingStatus(arr[13])
-	r := ConvertReason(arr[12])
+	t := GetTime(arr[17])
+	ship := ConvertShipStatus(arr[16])
+	sup := ConvertSupplyStatus(arr[12])
+	ls := ConvertLiftingStatus(arr[14])
+	r := ConvertReason(arr[13])
 
 	fmt.Printf("%s\n", t)
 
@@ -43,9 +43,9 @@ func MedSupplyFromRow(row []string) MedSupply {
 		Unit:                     row[2],
 		YjCode:                   row[3],
 		YjBase:                   GetYjBase(row[3]),
-		Maker:                    row[5],
-		BrandName:                arr[4],
-		SalesCategory:            arr[6],
+		Maker:                    row[6],
+		BrandName:                arr[5],
+		SalesCategory:            arr[7],
 		ShipmentStatus:           ship,
 		SupplyStatus:             sup,
 		ExpectLiftingStatus:      ls,

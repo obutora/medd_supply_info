@@ -6,6 +6,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"sync"
 
 	"entgo.io/ent/dialect"
 	"github.com/obutora/med_supply_info/ent"
@@ -106,43 +107,52 @@ func getMedSupplyFromFile(f *excelize.File) ([]entity.MedSupply, error) {
 }
 
 func getMedMakerFromFile(f *excelize.File) ([]entity.MedMaker, error) {
-	// メーカー名・HP取得
 	s4Name := f.GetSheetName(3)
 	rows, err := f.GetRows(s4Name)
 	if err != nil {
 		return nil, fmt.Errorf("get rows error: %v", err)
 	}
 
-	var medMakers []entity.MedMaker
+	medMakers := make([]entity.MedMaker, 0, len(rows)-1)
+	errors := make(chan error, len(rows)-1)
+	var wg sync.WaitGroup
 
-	for i, row := range rows {
-		if i == 0 {
-			continue
-		}
+	for _, row := range rows[1:] { // Skip the header row
 		if row[1] == "" {
 			continue
 		}
 
-		var d entity.MedMaker
-		if len(row) == 3 {
-			url := strings.Split(row[2], "\n")
+		wg.Add(1)
+		go func(row []string) {
+			defer wg.Done()
 
-			d = entity.MedMaker{
-				Name:       row[1],
-				Url:        url[0],
-				FaviconUrl: GetFaviconUrl(url[0]),
+			var d entity.MedMaker
+			if len(row) == 3 {
+				url := strings.Split(row[2], "\n")
+				d = entity.MedMaker{
+					Name:       row[1],
+					Url:        url[0],
+					FaviconUrl: GetFaviconUrl(url[0]),
+				}
+			} else {
+				d = entity.MedMaker{
+					Name:       row[1],
+					Url:        "",
+					FaviconUrl: "",
+				}
 			}
-			medMakers = append(medMakers, d)
-		} else {
 
-			d = entity.MedMaker{
-				Name:       row[1],
-				Url:        "",
-				FaviconUrl: "",
-			}
 			medMakers = append(medMakers, d)
+		}(row)
+	}
+
+	wg.Wait()
+	close(errors)
+
+	for err := range errors {
+		if err != nil {
+			return nil, err
 		}
-
 	}
 
 	for _, m := range medMakers {
